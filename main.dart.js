@@ -80849,7 +80849,7 @@ s=a.b<1000?B.GM:B.Z8
 q=A.asu(s,this.w,new A.a2X(this),q)}return A.a7o(r,q,r,r,r,24,24,r)},
 gOY(){var s=null,r=A.anm(B.Yk),q=A.jT(s,s,B.ow,s,s,s,s,s,s,s,s,s,s,s,s,s,!0,s,s,s,s,s,s,s,s),p=A.acO(s)
 p.aZ=new A.a2Y()
-return A.nW(A.a([A.ao7(s,s,B.dm,!0,s,A.dl(A.a([A.dl(s,p,q,"JSON to Dart")],t.VO),s,r,"Forked from Javier Lecuona's "),B.bI,s,s,1,B.bu),B.yG,A.jQ("Jorge Ribera \xb7 2022",s,s,s,A.anm(B.z9),s,s),B.yG,A.jQ("v0.1.1",s,s,s,A.anm(B.z9),s,s),B.yF],t.D),B.bl,B.bV)},
+return A.nW(A.a([A.ao7(s,s,B.dm,!0,s,A.dl(A.a([A.dl(s,p,q,"JSON to Dart")],t.VO),s,r,"Forked from Javier Lecuona's "),B.bI,s,s,1,B.bu),B.yG,A.jQ("Jorge Ribera \xb7 2022",s,s,s,A.anm(B.z9),s,s),B.yG,A.jQ("v0.2.0",s,s,s,A.anm(B.z9),s,s),B.yF],t.D),B.bl,B.bV)},
 r8(a,b,c){var s=null
 return A.rp(B.aF,A.fT(s,A.A6(A.a([new A.mw(new A.a35(a),s),B.yD,A.xu(A.jQ(b,s,s,s,s,s,s)),B.UH],t.D),B.bl,B.cl),s,s,s,s,B.p0,B.p0,s),B.b1,!1,s,s,s,s,s,s,s,s,s,s,s,new A.a36(a),s,s,s,s,s,s)},
 wh(){var s=0,r=A.a6(t.z),q,p=[],o=this,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3
@@ -81154,20 +81154,19 @@ Nz(a){var s=this.b
 return A.e(s!=null?s:this.a)+".fromJson("+a+")"},
 NC(a,b){if(b)return a+"?.toJson()"
 return a+".toJson()"},
-anI(a,b,c){var s,r,q=this,p="dynamic",o="json['"+a+"']",n=A.EM(a,!1,q)
-if(q.d){if(q.a==="List"){s=n+": json['"+a
-r=A.e(q.b)
-return c?s+"']?.cast<"+r+">(),":s+"'].cast<"+r+">(),"}return n+": json['"+a+"'],"}else{s=q.a
+anI(a,b,c){var s,r,q=this,p=" == null ? null : List<",o="dynamic",n="json['"+a+"']",m=A.EM(a,!1,q)
+if(q.d){if(q.a==="List"){s=A.e(q.b)
+return c?m+": "+n+p+s+">.from("+n+"),":m+": List<"+s+">.from("+n+"),"}return m+": json['"+a+"'],"}else{s=q.a
 r=s==="List"
-if(r&&q.b==="DateTime"){s=n+": json['"+a
-return c?s+"']?.map((v) => DateTime.tryParse(v)),":s+"'].map((v) => DateTime.tryParse(v)),"}else if(s==="DateTime")return n+": DateTime.tryParse(json['"+a+"']),"
+if(r&&q.b==="DateTime"){s=m+": json['"+a
+return c?s+"']?.map((v) => DateTime.tryParse(v)),":s+"'].map((v) => DateTime.tryParse(v)),"}else if(s==="DateTime")return m+": DateTime.tryParse(json['"+a+"']),"
 else if(r){s=q.b
-if(c){s=A.ez(s==null?p:s)
+if(c){s=A.ez(s==null?o:s)
 r=q.b
-s=n+": "+o+" == null ? null : List<"+s+">.from("+o+".map((v) => "+A.ez(r==null?p:r)+".fromJson(v))),"}else{s=A.ez(s==null?p:s)
+s=m+": "+n+p+s+">.from("+n+".map((v) => "+A.ez(r==null?o:r)+".fromJson(v))),"}else{s=A.ez(s==null?o:s)
 r=q.b
-s=n+": List<"+s+">.from("+o+".map((v) => "+A.ez(r==null?p:r)+".fromJson(v))),"}return s}else{s=n+": "
-return c?s+o+" == null ? null : "+q.Nz(o)+",":s+q.Nz(o)+","}}},
+s=m+": List<"+s+">.from("+n+".map((v) => "+A.ez(r==null?o:r)+".fromJson(v))),"}return s}else{s=m+": "
+return c?s+n+" == null ? null : "+q.Nz(n)+",":s+q.Nz(n)+","}}},
 aqV(a,b,c){var s,r,q=this,p=A.EM(a,!1,q)
 if(q.d)return"'"+a+"': "+p+","
 else{s="'"+a+"': "
