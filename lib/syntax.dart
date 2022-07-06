@@ -130,8 +130,11 @@ class TypeDefinition {
     if (isPrimitive) {
       if (name == "List") {
         return propertiesOptional
-            ? "$fieldKey: json['$key']?.cast<$subtype>(),"
-            : "$fieldKey: json['$key'].cast<$subtype>(),";
+            ? "$fieldKey: $jsonKey == null ? null : List<$subtype>.from($jsonKey),"
+            : "$fieldKey: List<$subtype>.from($jsonKey),";
+        // return propertiesOptional
+        //     ? "$fieldKey: json['$key']?.cast<$subtype>(),"
+        //     : "$fieldKey: json['$key'].cast<$subtype>(),";
       }
       return "$fieldKey: json['$key'],";
     } else if (name == "List" && subtype == "DateTime") {
