@@ -1,5 +1,7 @@
 # See https://www.dartlang.org/guides/libraries/private-files
 
+.idea
+
 # Files created by dart2js.
 *.dart.js
 *.js_
