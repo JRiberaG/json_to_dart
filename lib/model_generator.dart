@@ -2,8 +2,9 @@ import 'dart:collection';
 
 import 'package:dart_style/dart_style.dart';
 import 'package:json_ast/json_ast.dart' show parse, Settings, Node;
-import 'package:json_to_dart/helpers.dart';
-import 'package:json_to_dart/syntax.dart';
+
+import 'helpers.dart';
+import 'syntax.dart';
 
 class DartCode extends WithWarning<String> {
   DartCode(String result, List<Warning> warnings) : super(result, warnings);
@@ -21,12 +22,29 @@ class Hint {
 
 class ModelGenerator {
   final String _rootClassName;
-  final bool _privateFields;
-  List<ClassDefinition> allClasses = <ClassDefinition>[];
-  final Map<String, String> sameClassMapping = new HashMap<String, String>();
-  late List<Hint> hints;
+  final bool privateFields;
 
-  ModelGenerator(this._rootClassName, [this._privateFields = false, hints]) {
+  // Modified.
+  final bool propertiesFinal;
+  final bool propertiesOptional;
+  final bool addCopyWith;
+  final bool addToString;
+  final bool addEquatable;
+
+  List<ClassDefinition> allClasses = <ClassDefinition>[];
+  final Map<String, String> sameClassMapping = HashMap<String, String>();
+  late List<Hint>? hints;
+
+  ModelGenerator(
+    this._rootClassName, {
+    this.privateFields = false,
+    this.hints,
+    this.propertiesFinal = true,
+    this.addCopyWith = false,
+    this.propertiesOptional = true,
+    this.addToString = true,
+    this.addEquatable = false,
+  }) {
     if (hints != null) {
       this.hints = hints;
     } else {
@@ -36,15 +54,19 @@ class ModelGenerator {
 
   Hint? _hintForPath(String path) {
     final hint = this
-        .hints
+        .hints!
         .firstWhere((h) => h.path == path, orElse: () => Hint("", ""));
     if (hint.path == "") {
       return null;
     }
   }
 
-  List<Warning> _generateClassDefinition(String className,
-      dynamic jsonRawDynamicData, String path, Node? astNode) {
+  List<Warning> _generateClassDefinition(
+    String className,
+    dynamic jsonRawDynamicData,
+    String path,
+    Node? astNode,
+  ) {
     List<Warning> warnings = <Warning>[];
     if (jsonRawDynamicData is List) {
       // if first element is an array, start in the first element.
@@ -53,16 +75,23 @@ class ModelGenerator {
     } else {
       final Map<dynamic, dynamic> jsonRawData = jsonRawDynamicData;
       final keys = jsonRawData.keys;
-      ClassDefinition classDefinition =
-          new ClassDefinition(className, _privateFields);
+      ClassDefinition classDefinition = ClassDefinition(
+        className,
+        privateFields: privateFields,
+        propertiesFinal: propertiesFinal,
+        propertiesOptional: propertiesOptional,
+        addToString: addToString,
+        addCopyWith: addCopyWith,
+        addEquatable: addEquatable,
+      );
       keys.forEach((key) {
         TypeDefinition typeDef;
         final hint = _hintForPath('$path/$key');
         final node = navigateNode(astNode, key);
         if (hint != null) {
-          typeDef = new TypeDefinition(hint.type, astNode: node);
+          typeDef = TypeDefinition(hint.type, astNode: node);
         } else {
-          typeDef = new TypeDefinition.fromDynamic(jsonRawData[key], node);
+          typeDef = TypeDefinition.fromDynamic(jsonRawData[key], node);
         }
         if (typeDef.name == 'Class') {
           typeDef.name = camelCase(key);
@@ -140,8 +169,7 @@ class ModelGenerator {
         }
       });
     });
-    return new DartCode(
-        allClasses.map((c) => c.toString()).join('\n'), warnings);
+    return DartCode(allClasses.map((c) => c.toString()).join('\n'), warnings);
   }
 
   /// generateDartClasses will generate all classes and append one after another
@@ -149,8 +177,17 @@ class ModelGenerator {
   /// formatted JSON string. If the generated dart is invalid it will throw an error.
   DartCode generateDartClasses(String rawJson) {
     final unsafeDartCode = generateUnsafeDart(rawJson);
-    final formatter = new DartFormatter();
-    return new DartCode(
-        formatter.format(unsafeDartCode.code), unsafeDartCode.warnings);
+    final formatter = DartFormatter();
+
+    // print(
+    //     '\n=======================================================\nUnsafe dart code\n=======================================================\n${unsafeDartCode.code}');
+
+    String result = formatter.format(unsafeDartCode.code);
+
+    // Adds imports here because it'll throw a format error if written before.
+    if (addEquatable) {
+      result = "import 'package:equatable/equatable.dart';\n\n" + result;
+    }
+    return DartCode(result, unsafeDartCode.warnings);
   }
 }

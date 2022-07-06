@@ -1,10 +1,12 @@
 import 'dart:convert' as Convert;
 import 'dart:math';
+
 import 'package:json_ast/json_ast.dart'
     show Node, ObjectNode, ArrayNode, LiteralNode, PropertyNode;
-import 'package:json_to_dart/syntax.dart';
 
-const Map<String, bool> PRIMITIVE_TYPES = const {
+import 'syntax.dart';
+
+const Map<String, bool> PRIMITIVE_TYPES = {
   'int': true,
   'double': true,
   'String': true,
@@ -188,8 +190,11 @@ isPrimitiveType(String typeName) {
   return isPrimitive;
 }
 
-String fixFieldName(String name,
-    {required TypeDefinition typeDef, bool privateField = false}) {
+String fixFieldName(
+  String name, {
+  required TypeDefinition typeDef,
+  bool privateField = false,
+}) {
   var properName = name;
   if (name.startsWith('_') || name.startsWith(new RegExp(r'[0-9]'))) {
     final firstCharType = typeDef.name.substring(0, 1).toLowerCase();
@@ -200,6 +205,19 @@ String fixFieldName(String name,
     return '_$fieldName';
   }
   return fieldName;
+}
+
+String fixNamePlural(String name) {
+  if (name.endsWith('ss')) {
+    return name;
+  }
+  if (name.endsWith('ies')) {
+    return name.substring(0, name.length - 3) + 'y';
+  } else if (name.endsWith('s')) {
+    return name.substring(0, name.length - 1);
+  } else {
+    return name;
+  }
 }
 
 String getTypeName(dynamic obj) {
